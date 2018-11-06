@@ -768,12 +768,12 @@ add10(20) //30
 
 ```javascript
 function.prototype.partial = function() {
-    var fn = this,
-        args = Array.prototype.slice.call(argumetns)
-    return function(){
+    var fn = this,                       							//1
+        args = Array.prototype.slice.call(argumetns)				//1
+    return function(){												//2
         var arg = 0
-        for(var i=0; i<args.length && arg < arguments.length;i++) 
-            if(args[i]=== undefined) args[i] = arguments[arg++]
+        for(var i=0; i<args.length && arg < arguments.length;i++) 	//5
+            if(args[i]=== undefined) args[i] = arguments[arg++]		//6
         return fn.apply(this,args)
     }
 }
@@ -781,27 +781,61 @@ function abc(a,b,c) {
     console.log(a,b,c)
 }
 
-var ac = abc.partial(undefined, 'b', undefined)
-ac('a','c')//a b c
+var ac = abc.partial(undefined, 'b', undefined)						//3
+ac('a','c')//a b c													//4
 ```
 
 > HardCode
 
+1. 우선 partial이 실행되면 fn에 자기 자신인 `this` 를 담는다. args에는 `partial` 이 실행될 때 넘어온 인자들을 배열로 변경하여 args에 담는다. 
+
+2.  `fn`과 `args`는 리턴된 익명 함수가 기억하게 되므로 지워지지 않는다.
+3. `abc.partial` 을 실행할 때 첫 번재 인자와 세 번째 인자로 넘긴 `undefined` 자리는 나중에 `ac`가 실행될 때 채워질 것이다. 
+4. `ac` 를 실행하면서 넘긴 `a` 와 `c` 는
+5. 리턴된 익명함수의 `arguments` 에 담겨 있다. 
+6. `for` 를 돌면서 미리 받아 두었던 `args`에 `undefined` 가 들어 있던 자리를 `arguments` 에서 앞에서 부터 꺼내면서 채운다. 
 
 
 
+다 채우고 나면 미리 받아 두었던 `fn` 을 `apply` 로 실행하면서 인자들을 배열로 넘긴다. 
 
 
 
+좋아보이는 코드이지만, **인자의 개수가 자유롭지 못하다** 는 점과, 클로저로 생성 된 `args` 의 상태를 직접 조작하는 형태이기 때문에 **재사용이 불가능** 하다. 
+
+재사용이 불가능한 점은 아래와 같이 고치면 된다. 
+
+```javascript
+function.prototype.partial = function(){
+    var fn = this, _args = arguments 								//1
+    return function() {
+        var args = Array.prototype.slice.call(_args)				//2
+        var arg = 0
+        for(var i=0; i<args.length && arg < arguments.length;i++) 	//3
+            if(args[i]=== undefined) args[i] = arguments[arg++]	
+        return fn.apply(this,args)
+    }
+}
+```
 
 
 
+1. 클로저가 기억할 변수에는 원본을 남겼다.
+2. 리턴된 함수가 실행될 때 마다 복사하여 원본을 지켰다.
+3. 실행 될때마다 새로 들어온 인자를 채웠다. 
 
+ 
 
+이제 좋은 오픈소스인 `Underscore.js` 나 `Lodash` 의 `partial` 동작을 살펴보자.
 
+> 스타 많이 받은데는 이유가 있다. 
 
+```javascript
+var ac = _.partial(abc,_,'b')
+ac('a','c') //a b c
+var add2 = _.partial(add,_,2)
+add2(1,3,4,5) //15
+```
 
-
-
-
+적용해 둘 인자와 비워둘 이자를 구분하는 구분자로 `undefined` 대신 `_` 를 사용한다. 
 
