@@ -4,7 +4,7 @@
 ## 목차
 1. [함수형 자바스크립트 소개](https://github.com/ToBeFrontEndMaster/SoYoung/blob/master/1_%ED%95%A8%EC%88%98%ED%98%95_%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8_%EC%86%8C%EA%B0%9C/Chapter1.md)  
 
-2. 함수형 자바스크립트를 위한 문법 다시 보기  
+2. [함수형 자바스크립트를 위한 문법 다시 보기](https://github.com/ToBeFrontEndMaster/SoYoung/blob/master/2_%EB%AC%B8%EB%B2%95_%EB%8B%A4%EC%8B%9C%EB%B3%B4%EA%B8%B0/Chapter2.md)
 
 3. Underscore.js를 만들며 함수형 자바스크립트 익히기  
 
